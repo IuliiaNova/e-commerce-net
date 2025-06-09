@@ -1,0 +1,34 @@
+@page "/products"
+@using BlazorApp.Models
+@using BlazorApp.Services
+@inject ProductService ProductService
+
+<h3>Productos</h3>
+
+@if (products == null)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <div class="product-list">
+        @foreach (var product in products)
+        {
+            <div class="product-item">
+                <img src="@product.Image" alt="@product.Title" width="100" />
+                <h4>@product.Title</h4>
+                <p>@product.Price.ToString("C")</p>
+                <p>@product.Description</p>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<Product>? products;
+
+    protected override async Task OnInitializedAsync()
+    {
+        products = await ProductService.GetAllProductsAsync();
+    }
+}
