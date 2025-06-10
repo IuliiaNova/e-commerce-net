@@ -11,6 +11,25 @@
 }
 else
 {
+    <style>
+    .product-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px; /* espacio entre productos */
+    }
+    .product-item {
+        flex: 1 1 calc(25% - 16px); /* 4 items por fila menos el gap */
+        box-sizing: border-box;
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+    .product-item img {
+        max-width: 100%;
+        height: auto;
+    }
+    </style>
+
     <div class="product-list">
         @foreach (var product in products)
         {

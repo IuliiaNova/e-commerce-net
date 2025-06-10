@@ -1,0 +1,104 @@
+@page "/clients"
+@inject MockClientService ClientService
+@using BlazorApp.Components.Shares
+@using BlazorApp.Models
+
+<h3 class="text-2xl font-bold mb-4">Client Management</h3>
+
+<button class="btn btn-primary mb-3" @onclick="ShowAddForm">Add Client</button>
+
+@if (showForm)
+{
+    <Modal Title="Add Client" OnCancel="CancelForm">
+        <EditForm Model="@editingClient" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="mb-2">
+                <label>Name</label>
+                <InputText class="form-control" @bind-Value="editingClient.Name" />
+            </div>
+            <div class="mb-2">
+                <label>Email</label>
+                <InputText class="form-control" @bind-Value="editingClient.Email" />
+            </div>
+            <div class="mb-2">
+                <label>Phone</label>
+                <InputText class="form-control" @bind-Value="editingClient.Phone" />
+            </div>
+            <div class="mt-3">
+                <button type="submit" class="btn btn-success">Save</button>
+                <button type="button" class="btn btn-secondary ms-2" @onclick="CancelForm">Cancel</button>
+            </div>
+        </EditForm>
+    </Modal>
+}
+
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Name</th><th>Email</th><th>Phone</th><th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var client in clients)
+        {
+            <tr>
+                <td>@client.Name</td>
+                <td>@client.Email</td>
+                <td>@client.Phone</td>
+                <td>
+                    <button class="btn btn-sm btn-warning" @onclick="() => EditClient(client)">Edit</button>
+                    <button class="btn btn-sm btn-danger" @onclick="() => DeleteClient(client.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Client> clients = new();
+    private Client editingClient = new();
+    private bool showForm = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        clients = await ClientService.GetAllAsync();
+    }
+
+    private void ShowAddForm()
+    {
+        editingClient = new Client();
+        showForm = true;
+    }
+
+    private void EditClient(Client client)
+    {
+        editingClient = new Client
+        {
+            Id = client.Id,
+            Name = client.Name,
+            Email = client.Email,
+            Phone = client.Phone
+        };
+        showForm = true;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (editingClient.Id == 0)
+            await ClientService.AddAsync(editingClient);
+        else
+            await ClientService.UpdateAsync(editingClient);
+
+        showForm = false;
+        clients = await ClientService.GetAllAsync();
+    }
+
+    private void CancelForm() => showForm = false;
+
+    private async Task DeleteClient(int id)
+    {
+        await ClientService.DeleteAsync(id);
+        clients = await ClientService.GetAllAsync();
+    }
+}

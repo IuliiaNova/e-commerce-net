@@ -8,5 +8,9 @@ namespace BlazorApp.Models
         public string? Description { get; set; }
         public string? Category { get; set; }
         public string? Image { get; set; }
+        public int Stock { get; set; }
+
+        public ICollection<OrderProduct>? OrderProducts { get; set; }
+        public ICollection<CartProduct>? CartProducts { get; set; }
     }
 }

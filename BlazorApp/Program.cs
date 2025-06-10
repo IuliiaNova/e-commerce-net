@@ -9,6 +9,8 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddHttpClient();
+builder.Services.AddSingleton<MockClientService>();
+
 
 var app = builder.Build();
 
